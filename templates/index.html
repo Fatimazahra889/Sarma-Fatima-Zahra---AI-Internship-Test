@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MobileNet Image Classifier</title>
+  <style>
+    body {
+      background: #f4f0fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(120, 67, 233, 0.2);
+      text-align: center;
+      width: 400px;
+    }
+
+    h1 {
+      color: #764ba2;
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #eee;
+    }
+
+    button {
+      background-color: #764ba2;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #5e3c99;
+    }
+
+    #preview {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    #prediction {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #5e3c99;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Image Classifier</h1>
+    <form id="upload-form">
+      <input type="file" id="file" name="file" accept="image/*" required>
+      <br>
+      <button type="submit">Predict</button>
+    </form>
+    <img id="preview" src="#" alt="" style="display:none;" />
+    <div id="prediction"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("upload-form");
+    const fileInput = document.getElementById("file");
+    const preview = document.getElementById("preview");
+    const predictionText = document.getElementById("prediction");
+
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+        predictionText.innerText = "";
+      }
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/predict", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      predictionText.innerText = "Prediction: " + data.prediction;
+    };
+  </script>
+</body>
+</html>
