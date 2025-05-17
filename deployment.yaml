@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mobilenet-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mobilenet
+  template:
+    metadata:
+      labels:
+        app: mobilenet
+    spec:
+      containers:
+      - name: mobilenet-container
+        image: mobilenet-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        resources:              
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
